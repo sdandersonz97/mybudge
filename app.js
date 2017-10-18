@@ -34,16 +34,28 @@ var UIController = (function(){
 //GLOBAL CONTROLLER
 var controller = (function(budgeCtrl, UICtrl){
 
+    var setupEventListeners = function(){
+        var DOM = UIController.getDOMString();
+        document.querySelector(DOM.inputBtn).addEventListener('click', ctrlAddItem);
+        document.addEventListener('keypress', function(event){
+            if(event.keyCode === 13 || event.which === 13){
+                ctrlAddItem();
+            }
+        });
+    };
+
     var ctrlAddItem  = function() {
         var input = UIController.getInput();
-    }
-    var DOM = UIController.getDOMString();
-
-    document.querySelector(DOM.inputBtn).addEventListener('click', ctrlAddItem);
-    document.addEventListener('keypress', function(event){
-        if(event.keyCode === 13 || event.which === 13){
-            ctrlAddItem();
+    };
+    
+    return {
+        init: function() {
+            setupEventListeners();
         }
-    });
+    };
+    
 
 })(budgeController, UIController);
+
+
+controller.init();
