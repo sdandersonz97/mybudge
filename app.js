@@ -4,12 +4,12 @@ var budgeController = (function(){
         this.id = id;
         this.description = description;
         this.value = value;
-    }
+    };
     var Incomes = function(id, description, value){
         this.id = id;
         this.description = description;
         this.value = value;
-    }
+    };
 
     
     var data = {
@@ -21,8 +21,27 @@ var budgeController = (function(){
             exp: 0,
             inc: 0
         }
-    }
-    
+    };
+
+    return {
+        addItem: function(type, des, val) {
+            var newItem, id;
+            if(data.allItems[type].length > 0 ){
+                id = data.allItems[type][data.allItems[type].length - 1].id;
+            } else {
+                id = 0;
+            }
+            
+            type === 'exp' ? newItem = new Expense(id, type, des, val) : newItem = new Incomes(id, type, des, val);
+            data.allItems[type].push(newItem);
+            return newItem
+        },
+        testing: function(){
+            console.log(data)
+        }
+    };
+
+
 })();
     
     
@@ -65,7 +84,11 @@ var controller = (function(budgeCtrl, UICtrl){
     };
 
     var ctrlAddItem  = function() {
-        var input = UIController.getInput();
+        var input, newItem;
+        input = UIController.getInput();
+        newItem = budgeCtrl.addItem(input.type, input.description, input.value);
+        console.log(newItem + ' new item');
+        budgeCtrl.testing();
     };
     
     return {
