@@ -8,8 +8,25 @@ var budgeController = (function(){
     
 //UI CONTROLLER
 var UIController = (function(){
+    var DOMStrings = {
+        inputType: '.add__type',
+        inputDescription: '.add__description',
+        inputValue: '.add__value',
+        inputBtn: '.add__btn'
+    };
 
-
+    return {
+        getInput: function(){
+            return {
+                type: document.querySelector(DOMStrings.inputType).value,
+                description: document.querySelector(DOMStrings.inputDescription).value,
+                value: document.querySelector(DOMStrings.inputValue).value,
+            };
+        },
+        getDOMString: function(){
+            return DOMStrings
+        }
+    };
 
 })();
     
@@ -18,10 +35,11 @@ var UIController = (function(){
 var controller = (function(budgeCtrl, UICtrl){
 
     var ctrlAddItem  = function() {
-        console.log('record')
+        var input = UIController.getInput();
     }
+    var DOM = UIController.getDOMString();
 
-    document.querySelector('.add__btn').addEventListener('click', ctrlAddItem);
+    document.querySelector(DOM.inputBtn).addEventListener('click', ctrlAddItem);
     document.addEventListener('keypress', function(event){
         if(event.keyCode === 13 || event.which === 13){
             ctrlAddItem();
