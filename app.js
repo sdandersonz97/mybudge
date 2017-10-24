@@ -61,7 +61,7 @@ var UIController = (function(){
             return {
                 type: document.querySelector(DOMStrings.inputType).value,
                 description: document.querySelector(DOMStrings.inputDescription).value,
-                value: document.querySelector(DOMStrings.inputValue).value,
+                value: parseFloat(document.querySelector(DOMStrings.inputValue).value),
             };
         },
         addListItem: function(obj, type){
@@ -101,7 +101,7 @@ var UIController = (function(){
     
 //GLOBAL CONTROLLER
 var controller = (function(budgeCtrl, UICtrl){
-
+    //Set the event listeners
     var setupEventListeners = function(){
         var DOM = UIController.getDOMString();
         document.querySelector(DOM.inputBtn).addEventListener('click', ctrlAddItem);
@@ -111,13 +111,21 @@ var controller = (function(budgeCtrl, UICtrl){
             }
         });
     };
+    
+    var updateBudget = function(){
 
+    };
+
+    //excuted each time an user press enter or add button
     var ctrlAddItem  = function() {
         var input, newItem;
         input = UIController.getInput();
-        newItem = budgeCtrl.addItem(input.type, input.description, input.value);
-        UIController.addListItem(newItem, input.type);
-        UIController.clearFields();
+        if(input.description && !isNaN(input.value) && input.value > 0){
+            newItem = budgeCtrl.addItem(input.type, input.description, input.value);
+            UIController.addListItem(newItem, input.type);
+            UIController.clearFields();
+            updateBudget();
+        }
     };
     
     return {
