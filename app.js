@@ -10,7 +10,13 @@ var budgeController = (function(){
         this.description = description;
         this.value = value;
     };
-
+    var calculateTotal = function(type){
+        var sum = 0;
+        data.allItems[type].forEach(function(cur){
+            sum = sum + cur.value;
+        })
+        data.totals[type] = sum;
+    };
     
     var data = {
         allItems: {
@@ -20,7 +26,9 @@ var budgeController = (function(){
         totals: {
             exp: 0,
             inc: 0
-        }
+        },
+        budge: 0,
+        percentage: -1
     };
 
     return {
@@ -35,6 +43,28 @@ var budgeController = (function(){
             type === 'exp' ? newItem = new Expense(id, type, des, val) : newItem = new Incomes(id, type, des, val);
             data.allItems[type].push(newItem);
             return newItem
+        },
+        calculateBudget:function(){
+            // calculate total incomes and expenses 
+            calculateTotal('exp');
+            calculateTotal('inc');
+            // calculate the budge
+            data.budge = data.totals.inc - data.totals.exp;
+            //calculate % of income expended 
+            if(data.totals.inc > 0){
+                data.percentage = Math.round((data.totals.exp / data.totals.inc) * 100);
+            } else {
+                data.percentage = -1;
+            }
+            
+        },
+        getBudget: function(){
+            return {
+                budge: data.budge,
+                totalInc: data.totals.inc,
+                totalExpf: data.totals.exp,
+                percentage: data.percentage
+            }
         },
         testing: function(){
             console.log(data)
@@ -113,7 +143,11 @@ var controller = (function(budgeCtrl, UICtrl){
     };
     
     var updateBudget = function(){
-
+        //calculate budfge
+        budgeCtrl.calculateBudget();
+       //get total values
+       var budge = budgeCtrl.getBudget();
+        
     };
 
     //excuted each time an user press enter or add button
