@@ -4,7 +4,21 @@ var budgeController = (function(){
         this.id = id;
         this.description = description;
         this.value = value;
+        this.percentage = -1;
     };
+
+    Expense.prototype.calcPercentages = function(totalIncome){
+        if(totalIncome > 0 ){
+            this.percentage = Math.round((this.value / totalIncome) * 100);
+        } else {
+            this.percentage = -1;
+        }
+    };
+
+    Expense.prototype.getPercentage = function(){
+        return this.percentage;
+    }
+
     var Incomes = function(id, description, value){
         this.id = id;
         this.description = description;
@@ -67,6 +81,17 @@ var budgeController = (function(){
                 data.percentage = -1;
             }
             
+        },
+        calculatePercentages: function(){
+            data.allItems.exp.forEach(function(element){
+                element.calcPercentages(data.totals.inc);
+            });
+        },
+        getPercentages: function(){
+            var allperc  = data.allItems.exp.map(function(element){
+                return element.getPercentage();
+            });
+            return allperc
         },
         getBudget: function(){
             return {
@@ -195,9 +220,17 @@ var controller = (function(budgeCtrl, UICtrl){
             UIController.addListItem(newItem, input.type);
             UIController.clearFields();
             updateBudget();
+            updatePercentages();
         }
     };
-    
+    var updatePercentages = function(){
+        //calculate the percentages
+        budgeCtrl.calculatePercentages();
+        //read percentagess from the budget controller
+        var percentages = budgeCtrl.getPercentages();
+        //update the user interface with the new percentages
+    };
+    //excuted each time an user press the delete button
     var ctrDeleteItem = function(event){
         var itemId, splitId, type, id;
         itemId = event.target.parentNode.parentNode.parentNode.parentNode.id;
@@ -212,6 +245,7 @@ var controller = (function(budgeCtrl, UICtrl){
             UIController.deleteListItem(itemId);
             //update and show the new budget
             updateBudget();
+            updatePercentages();
         }
 
     };
