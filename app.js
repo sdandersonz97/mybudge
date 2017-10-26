@@ -123,7 +123,8 @@ var UIController = (function(){
         incomeLabel:  '.budget__income--value',
         expensesLabel: '.budget__expenses--value',
         percentageLabel: '.budget__expenses--percentage',
-        container: '.container'
+        container: '.container',
+        expensesPercentageLabel: '.item__percentage'
     };
 
     return {
@@ -177,6 +178,21 @@ var UIController = (function(){
                 document.querySelector(DOMStrings.percentageLabel).textContent = '---';
             }
         },
+        displayPercentages: function(percentages){
+            var field =  document.querySelectorAll(DOMStrings.expensesPercentageLabel);
+            var nodeListForEach = function(list, cb){
+                for(var i = 0; i < list.length; i++){
+                    cb(list[i], i);
+                }
+            }
+            nodeListForEach(field, function(current, index){
+                if(percentages[index] > 0){
+                current.textContent = percentages[index] + '%';
+                } else {
+                    currenttextContent = '---';
+                }
+            });
+        },
         getDOMString: function(){
             return DOMStrings;
         }
@@ -189,7 +205,7 @@ var UIController = (function(){
 var controller = (function(budgeCtrl, UICtrl){
     //Set the event listeners
     var setupEventListeners = function(){
-        var DOM = UIController.getDOMString();
+        var DOM = UICtrl.getDOMString();
         document.querySelector(DOM.inputBtn).addEventListener('click', ctrlAddItem);
         document.addEventListener('keypress', function(event){
             if(event.keyCode === 13 || event.which === 13){
@@ -214,11 +230,11 @@ var controller = (function(budgeCtrl, UICtrl){
     //excuted each time an user press enter or add button
     var ctrlAddItem  = function() {
         var input, newItem;
-        input = UIController.getInput();
+        input = UICtrl.getInput();
         if(input.description && !isNaN(input.value) && input.value > 0){
             newItem = budgeCtrl.addItem(input.type, input.description, input.value);
-            UIController.addListItem(newItem, input.type);
-            UIController.clearFields();
+            UICtrl.addListItem(newItem, input.type);
+            UICtrl.clearFields();
             updateBudget();
             updatePercentages();
         }
@@ -229,6 +245,7 @@ var controller = (function(budgeCtrl, UICtrl){
         //read percentagess from the budget controller
         var percentages = budgeCtrl.getPercentages();
         //update the user interface with the new percentages
+        UICtrl.displayPercentages(percentages);
     };
     //excuted each time an user press the delete button
     var ctrDeleteItem = function(event){
@@ -242,7 +259,7 @@ var controller = (function(budgeCtrl, UICtrl){
             //delete item from data structure
             budgeCtrl.deleteItem(type, id);
             //delete item from user interface
-            UIController.deleteListItem(itemId);
+            UICtrl.deleteListItem(itemId);
             //update and show the new budget
             updateBudget();
             updatePercentages();
