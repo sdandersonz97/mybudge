@@ -208,7 +208,15 @@ var UIController = (function(){
                 }
             });
         },
-        
+        displayMonth: function(){
+            var month, year, now, months;
+            months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'Octuber', 'November', 'December']
+            now = new Date();
+            month = now.getMonth();
+            year = now.getFullYear();
+            document.querySelector(DOMStrings.dateLabel).textContent = months[month] + ' ' + year;
+
+        },
         getDOMString: function(){
             return DOMStrings;
         }
@@ -291,7 +299,7 @@ var controller = (function(budgeCtrl, UICtrl){
                     totalExp: 0,
                     percentage: -1
             });
-           
+            UICtrl.displayMonth();
         }
     };
     
