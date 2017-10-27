@@ -140,6 +140,11 @@ var UIController = (function(){
         
         return (type === 'exp' ? '-' : '+') + ' ' + int + '.' + dec; 
     }
+    var nodeListForEach = function(list, cb){
+        for(var i = 0; i < list.length; i++){
+            cb(list[i], i);
+        }
+    }
     return {
         getInput: function(){
             return {
@@ -195,11 +200,7 @@ var UIController = (function(){
         },
         displayPercentages: function(percentages){
             var field =  document.querySelectorAll(DOMStrings.expensesPercentageLabel);
-            var nodeListForEach = function(list, cb){
-                for(var i = 0; i < list.length; i++){
-                    cb(list[i], i);
-                }
-            }
+           
             nodeListForEach(field, function(current, index){
                 if(percentages[index] > 0){
                 current.textContent = percentages[index] + '%';
@@ -210,12 +211,22 @@ var UIController = (function(){
         },
         displayMonth: function(){
             var month, year, now, months;
-            months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'Octuber', 'November', 'December']
+            months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'Octuber', 'November', 'December'];
             now = new Date();
             month = now.getMonth();
             year = now.getFullYear();
             document.querySelector(DOMStrings.dateLabel).textContent = months[month] + ' ' + year;
 
+        },
+        changedType: function(){
+            var fields = document.querySelectorAll(
+                DOMStrings.inputType + ',' +
+                DOMStrings.inputDescription + ',' + 
+                DOMStrings.inputValue);
+            nodeListForEach(fields, function(cur){
+                cur.classList.toggle('red-focus');
+            });
+            document.querySelector(DOMStrings.inputBtn).classList.toggle('red')
         },
         getDOMString: function(){
             return DOMStrings;
@@ -239,6 +250,7 @@ var controller = (function(budgeCtrl, UICtrl){
 
 
         document.querySelector(DOM.container).addEventListener('click', ctrDeleteItem);
+        document.querySelector(DOM.inputType).addEventListener('change', UICtrl.changedType);
     };
     
     var updateBudget = function(){
